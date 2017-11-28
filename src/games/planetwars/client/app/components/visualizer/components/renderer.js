@@ -20,7 +20,6 @@ class Renderer extends React.Component {
       this.calculateViewBox();
       this.draw();
       this.voronoiRenderer(this.props.turnNum, this.voronoiContainer);
-      // function drawShipScores(data, svgContainer, w, h){
       this.graphDrawers.drawShipScores();
     }
   }

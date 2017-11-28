@@ -52,7 +52,7 @@ function getDrawers(svgContainer,data,  width, height){
     return axispoints;
   }
   
-  function drawAxises(count, maxX, maxY, svgContainer){
+  function drawAxises(count, maxX, maxY, svgContainer, xName){
         var axispoints = getAxisPoints(10);
     
         var lineFunction = d3.line()
@@ -68,6 +68,7 @@ function getDrawers(svgContainer,data,  width, height){
   
         var xGraphText = svgContainer.append("g");
         var yGraphText = svgContainer.append("g");
+        var graphNames = svgContainer.append("g");
   
         var textY = yGraphText.selectAll("text")
                          .data(axispoints.filter((a,i) => !(i % 6) && (i <= 3*count)))
@@ -94,13 +95,23 @@ function getDrawers(svgContainer,data,  width, height){
                    .attr("font-family", "sans-serif")
                    .attr("font-size", "1.5px")
                    .attr("fill", "black");
-  }
 
-  ////////////////////////////////////////////////////////////////////////////
+        var axisLabels = graphNames.selectAll("text")
+                          .data([[5, 7, xName], [92, 90, "Turns"]])
+                          .enter()
+                          .append("text");
+
+        var axisLabelses = axisLabels.attr("x", function(d) { return getRealX(d[0])})
+                  .attr("y", d => getRealY(d[1]))
+                  .text(d => d[2])
+                  .attr("font-family", "sans-serif")
+                  .attr("font-size", "2px")
+                  .attr("fill", "black");
+  }
 
   function drawShipScores(){
     svgContainer.selectAll("*").remove();
-    drawAxises(10, maxTurns, maxShips, svgContainer);
+    drawAxises(10, maxTurns, maxShips, svgContainer, "Shipcount");
     
     for(let playerNumber = 0; playerNumber < data.turns[0].players.length; playerNumber ++){
       var playerStatLineFunction = d3.line()
@@ -118,7 +129,7 @@ function getDrawers(svgContainer,data,  width, height){
 
   function drawPlanetScores(){
     svgContainer.selectAll("*").remove();
-    drawAxises(10, maxTurns, maxPlanets, svgContainer);
+    drawAxises(10, maxTurns, maxPlanets, svgContainer, "Planetcount");
     
     for(let playerNumber = 0; playerNumber < data.turns[0].players.length; playerNumber ++){
       var playerStatLineFunction = d3.line()
@@ -130,7 +141,7 @@ function getDrawers(svgContainer,data,  width, height){
                               .attr("d", playerStatLineFunction(data.turns))
                               .attr("stroke", data.turns[0].players[playerNumber].color)
                               .attr("stroke-width", 0.3)
-                              .attr("fill", "none");
+                              .attr("fill", "none");                              
     }
   }
 
@@ -140,7 +151,7 @@ function getDrawers(svgContainer,data,  width, height){
   data.turns.forEach(t => {
     t.players.forEach(p => {
       if(maxShips < p.ship_count){
-        maxShips = p.ship_count; // planet_count
+        maxShips = p.ship_count;
       }
       if(maxPlanets < p.planet_count){
         maxPlanets = p.planet_count;
