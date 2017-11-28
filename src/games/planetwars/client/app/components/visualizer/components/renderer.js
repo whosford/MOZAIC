@@ -7,7 +7,9 @@ const spaceMath = require('../util/spacemath')
 const Config = require('../util/config');
 const PlanetRenderer = require('../renderers/planets');
 const ExpeditionRenderer = require('../renderers/expeditions');
-const Voronoi = require('./voronoi.js')
+const Voronoi = require('./voronoi.js');
+const GraphRenderer = require("./graphRenderer.js");
+
 let styles = require('./renderer.scss');
 
 
@@ -18,6 +20,8 @@ class Renderer extends React.Component {
       this.calculateViewBox();
       this.draw();
       this.voronoiRenderer(this.props.turnNum, this.voronoiContainer);
+      // function drawShipScores(data, svgContainer, w, h){
+      this.graphDrawers.drawShipScores();
     }
   }
 
@@ -27,15 +31,16 @@ class Renderer extends React.Component {
     this.container = d3.select(this.svg).append('g')
       // TODO: There are some bugs with viewboxes and centering
       .attr('transform', 'translate(1, -7)');
+    this.graphContainer = this.container.append("g");
     this.planetRenderer = new PlanetRenderer(this.container);
     this.expeditionRenderer = new ExpeditionRenderer(this.container);
-    //function initVoronoi(turns, color_map, box){
-
+    
     this.turn = this.props.game.turns[0];
     this.calculateViewBox();
-    console.log(this.props.game);
     this.voronoiRenderer = Voronoi.initVoronoi(this.props.game.turns, Config.player_color, [this.min, this.max]);
     this.createZoom();
+
+    this.graphDrawers = GraphRenderer.getDrawers(this.graphContainer, this.props.game, this.max[0] - this.min[0], this.max[1] - this.min[1]);
   }
 
   render() {

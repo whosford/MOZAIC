@@ -58,7 +58,6 @@ class Polygon {
         }
       });
     });
-    console.log(this.neighbours);
   }
 
   isPossible(point, hardEnd, owner, target, data){
@@ -100,20 +99,12 @@ class Polygon {
   maybeStart(layer, point, hardEnd, owner, target, data, returnList){
     var i = getIndex(this.polygon, point);
     if(i === -1){
-      console.log("no points of me");
       return false;
     }
 
     if(owner !== this.owner){
-      console.log("not my owner");
       return false;
     }
-
-/*
-    if(data.used[this.name] && this.polygon.indexOf(hardEnd) === -1){
-      console.log("already used");
-      return false;
-    } */
 
     var endi = (i-1+this.polygon.length)%this.polygon.length;
   //  var endi = i;
